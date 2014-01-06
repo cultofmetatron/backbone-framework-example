@@ -12,7 +12,8 @@
   
   var menuLinks = new application.BaseCollection([
     {linkName: 'Home', url: '/home'},
-    {linkName: 'About', url: '/about'}
+    {linkName: 'About', url: '/about'},
+    {linkName: 'Contact', url: '/contact'}
   ]);
 
   var MenuLinkView = application.BaseView.extend({
