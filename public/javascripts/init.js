@@ -1,6 +1,6 @@
 
-(function(window, $, _, Backbone, undefined) {
-  
+ (function(window, $, _, Backbone, undefined) {
+ 
   window.templates = {};
 
   var $sources = $('script[type="text/template"]');
@@ -8,12 +8,6 @@
     var $el = $(el);
     templates[$el.data('name')] = _.template($el.html());
   });
-
-
-
-
-
-
 
 
 
