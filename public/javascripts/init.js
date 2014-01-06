@@ -9,8 +9,30 @@
     templates[$el.data('name')] = _.template($el.html());
   });
 
+  
+  var menuLinks = new application.BaseCollection([
+    {linkName: 'Home', url: '/home'},
+    {linkName: 'About', url: '/about'}
+  ]);
+
+  var MenuLinkView = application.BaseView.extend({
+    tagName: 'li',
+    tpl: 'menuLinks'
+  });
+
+  var MenuLinksView = application.CollectionView.extend({
+    tagName: 'ul',
+    className: 'nav navbar-nav',
+    ItemView: MenuLinkView
+  });
+
   window.topNavView = new application.TopNavView({
-    tpl: 'header'
+    tpl: 'header',
+    subViews: {
+      linkList: new MenuLinksView({
+        collection: menuLinks
+      })
+    }
   });
   //topNavView.render();
 

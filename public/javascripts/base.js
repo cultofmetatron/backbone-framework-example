@@ -10,6 +10,13 @@
     }
   });
 
+  application.BaseCollection = Backbone.Collection.extend({
+    initialize: function(options) {
+      Backbone.Collection.prototype.initialize.apply(this, arguments);
+
+    }
+  });
+
   application.BaseView = Backbone.View.extend({
     initialize: function(options) {
       this.subViews = options.subViews || {};
@@ -21,12 +28,15 @@
       }
     },
     loadTemplate: function(tpl) {
-      if (_.isString(tpl)) {
-        this.template = templates[tpl];
-      } else if (_.isFunction(tpl)) {
-        this.template = tpl;
-      } else {
-        throw new Error('template must be a function or string');
+      tpl = tpl || this.tpl;
+      if (tpl || this.tpl) {
+        if (_.isString(tpl)) {
+          this.template = templates[tpl];
+        } else if (_.isFunction(tpl)) {
+          this.template = tpl;
+        } else {
+          throw new Error('template must be a function or string');
+        }
       }
     },
     addSubView: function(viewName, view) {
@@ -52,7 +62,8 @@
       _(this.contextTransforms).each(function(fn) {
         fn.call(this, context);
       }, this);
-
+    
+      //pop it in the dom
       this.$el.html(this.template(context));
   
       var subViews = this.subViews;
@@ -65,7 +76,7 @@
           }, this)
           .map(function(className) {
             return className.slice(5);
-          })
+          }, this)
           .value()[0]; //grab the first item
         $el.html(subViews[subView].render().$el);
       }, this));
@@ -120,7 +131,7 @@
         return new this.ItemView({
           model: model
         }).render().$el;
-      });
+      }, this);
       return $nodes;
     },
     renderForTemplate: function() {
