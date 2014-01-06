@@ -9,6 +9,13 @@
     templates[$el.data('name')] = _.template($el.html());
   });
 
+  window.topNavView = new application.TopNavView({
+    tpl: 'header'
+  });
+  //topNavView.render();
+
+  $('div.main').html(topNavView.render().$el)
+
 
 
 }).call(this, window, jQuery, _, Backbone);
