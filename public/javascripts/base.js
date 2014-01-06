@@ -12,6 +12,7 @@
 
   application.BaseView = Backbone.View.extend({
     initialize: function(options) {
+      this.subViews = options.subViews || {};
       this.contextTransforms = [];
       Backbone.View.prototype.initialize.apply(this, arguments);
       this.loadTemplate(options.tpl);
@@ -28,6 +29,12 @@
         throw new Error('template must be a function or string');
       }
     },
+    addSubView: function(viewName, view) {
+      this.subViews[viewName] = view;
+    },
+    removeSubView: function(viewName) {
+      delete this.subViews[viewName];
+    },
     addToRenderContext: function(fn) {
       this.contextTransforms.push(fn);
     },
@@ -35,6 +42,10 @@
       //$el
       this.$el.html('');
       var context = {};
+      context._subView = function(viewName) {
+        return '<div class="subView view-' + viewName + '"></div>';
+      };
+
       if (this.model) {
         _.extend(context, this.model.attributes);
       }
@@ -43,6 +54,22 @@
       }, this);
 
       this.$el.html(this.template(context));
+  
+      var subViews = this.subViews;
+      this.$el.find('.subView').each(_.bind(function(index, el) {
+        var $el = $(el);
+        // view-
+        var subView = _(Array.prototype.slice.call(el.classList)).chain()
+          .filter(function(className, index) {
+            return (className.match(/^view-/));
+          }, this)
+          .map(function(className) {
+            return className.slice(5);
+          })
+          .value()[0]; //grab the first item
+        $el.html(subViews[subView].render().$el);
+      }, this));
+
       return this;
     }
   });
@@ -59,12 +86,10 @@
           throw new Error('wtf mehul, you forgot all the bobms!!');
         }
       }
-
       if (this.collection) {
         //bla
         this.bindRenderEvents();
       }
-
     },
     bindRenderEvents: function() {
       var bindEvent = function(event, context) {
